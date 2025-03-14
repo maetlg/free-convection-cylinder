@@ -1,0 +1,584 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          0.002;
+
+writeControl    adjustableRunTime;
+
+writeInterval   100;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  9;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+functions
+{
+/*
+    #includeFunc planes
+
+    #includeFunc probesZ0
+    #includeFunc probesZ1
+    #includeFunc probesZ01
+    #includeFunc probesZ2
+    #includeFunc probesZ3  
+    #includeFunc probesZ4  
+    #includeFunc probesZ5  
+    #includeFunc probesZ6  
+    #includeFunc probesZ7  
+    #includeFunc probesZ8  
+    #includeFunc probesZ9
+    #includeFunc probesZ10    
+
+
+    fieldAverage
+    {
+        type            fieldAverage;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    writeTime;
+        timeStart       100;
+
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;   
+            }
+            
+            T
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;   
+            }            
+        );
+    }
+
+	heatFlux
+	{
+		type            grad;
+		libs            ("libfieldFunctionObjects.so");
+		field           T;
+		writeControl    runTime;
+		writeInterval   100;		
+	}
+
+	magHeatFlux
+	{
+		type            mag;
+		libs            ("libfieldFunctionObjects.so");
+		field           grad(T);
+		writeControl    runTime;
+		writeInterval   100;		
+	}
+
+	fluxAverage
+	{
+		name cylinder;
+		fields (mag(grad(T)));
+
+		operation     areaAverage;
+		#includeEtc "caseDicts/postProcessing/surfaceFieldValue/patch.cfg"
+		writeControl    runTime;
+		writeInterval   100;
+	}  
+
+
+   TmeanTopWall
+	{
+		type            surfaceFieldValue;
+		libs            ("libfieldFunctionObjects.so");
+		writeControl    runTime;
+		writeInterval   50;
+		log             no;
+		writeTotalArea  no;
+		writeFields     no;
+		regionType      patch;	
+		name            topWall;
+		operation       areaAverage;
+		fields          (T);
+		//#includeEtc "caseDicts/postProcessing/surfaceFieldValue/patch.cfg"
+		//writeControl  timeStep;
+		//writeInterval 10;
+	}
+	
+	residuals
+	{
+		#includeEtc "caseDicts/postProcessing/numerical/residuals.cfg"
+		fields (p_rgh h);	
+	}
+	
+	probes
+	{
+		#includeEtc "caseDicts/postProcessing/probes/probes.cfg"
+
+		fields (U T);
+		probeLocations
+		(
+			(0.0 0.11 1.0)
+			(-0.18 0.11 1.0)
+		);
+
+		interpolationScheme  cellPoint;
+		writeControl         runTime;
+		writeInterval        0.1;	
+	}
+
+	profileZ0
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.0 0.14 0.0);
+						end    (0.0 0.14 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ1 
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.01 0.14 0.0);
+						end    (0.01 0.14 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ2
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.0 0.13 0.0);
+						end    (0.0 0.13 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ3
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.0 0.12 0.0);
+						end    (0.0 0.12 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ4
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.0 0.11 0.0);
+						end    (0.0 0.11 2.0);
+						axis   xyz;
+				}
+		);
+	}
+	
+
+	profileZ5
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.015 0.13 0.0);
+						end    (0.015 0.13 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ6
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.015 0.12 0.0);
+						end    (0.015 0.12 2.0);
+						axis   xyz;
+				}
+		);
+	}
+
+	profileZ7
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (0.015 0.11 0.0);
+						end    (0.015 0.11 2.0);
+						axis   xyz; 
+				}
+		);
+	}
+
+	profileZ8
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+
+		sets
+		(
+				line
+				{
+						type   lineCell;
+						start  (-0.015 0.11 0.0);
+						end    (-0.015 0.11 2.0);
+						axis   xyz;
+				}
+		);
+	} 
+
+	#includeFunc profileCyl
+
+	profileX0
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (-0.8 0.105 1.0);
+				end    (0.8 0.105 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+	
+	profileX1
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (-0.8 0.12 1.0);
+				end    (0.8 0.12 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+	
+	profileX2
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (-0.8 0.13 1.0);
+				end    (0.8 0.13 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+	
+	profileY0
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (0.0 0.0  1.0);
+				end    (0.0 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+
+	profileY1
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (0.02 0.0  1.0);
+				end    (0.02 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+	
+	profileY2
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (-0.02 0.0  1.0);
+				end    (-0.02 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+
+	profileY3
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (0.03 0.0  1.0);
+				end    (0.03 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+	
+	profileY4
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (0.08 0.0 1.0);
+				end    (0.08 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+
+	profileY5
+	{
+		type    sets;
+		libs    ("libsampling.so");
+
+		fields               (T mag(grad(T)) TMean U UMean);
+		interpolationScheme  cellPoint;
+		setFormat            raw;
+		writeControl         runTime;
+		writeInterval        100;
+				
+		sets
+		(
+			line
+			{
+				type   lineCell;
+				start  (0.7 -0.7 1.0);
+				end    (0.7 0.14 1.0);
+				axis   xyz;				
+			}
+		);		
+	}
+*/
+}
+// ************************************************************************* //

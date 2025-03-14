@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Generate mesh
+gmsh cylinderStruct3D.geo -3 -format msh2
+
+# Convert mesh
+gmshToFoam cylinderStruct3D.msh
+
+# Decompose domain
+decomposePar
+
+# Run application
+echo "Launching buoyantPimpleFoam application..."
+mpirun -n 8 buoyantPimpleFoam -parallel > log.buoyantPimpleFoam
+echo "All done"
